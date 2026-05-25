@@ -3,7 +3,7 @@ from __future__ import annotations
 from datetime import datetime, timezone
 from typing import Any, Literal
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, field_validator, model_validator
 
 Severity = Literal["low", "medium", "high", "critical"]
 
@@ -15,9 +15,42 @@ class Persona(BaseModel):
     vulnerability_notes: str | None = None
 
 
+class StoryPhase(BaseModel):
+    """A paced segment of a long-context roleplay scenario."""
+
+    id: str
+    turns: int = Field(gt=0)
+    objective: str
+    risk_probe: str = "none"
+    directness: float = Field(default=0.0, ge=0.0, le=1.0)
+    obliqueness: float = Field(default=0.0, ge=0.0, le=1.0)
+    emotional_intensity: float = Field(default=0.0, ge=0.0, le=1.0)
+    persistence: float = Field(default=0.0, ge=0.0, le=1.0)
+    topic_drift: float = Field(default=0.0, ge=0.0, le=1.0)
+    compliance_pressure: float = Field(default=0.0, ge=0.0, le=1.0)
+    sample_user_turns: list[str] = Field(default_factory=list)
+
+
 class StoryArc(BaseModel):
     goal: str
-    beats: list[str] = Field(min_length=1)
+    beats: list[str] = Field(default_factory=list)
+    phases: list[StoryPhase] = Field(default_factory=list)
+
+    @model_validator(mode="after")
+    def require_beats_or_phases(self) -> "StoryArc":
+        if not self.beats and not self.phases:
+            raise ValueError("story_arc must include at least one beat or one phase")
+        return self
+
+    @property
+    def total_phase_turns(self) -> int:
+        return sum(phase.turns for phase in self.phases)
+
+    @property
+    def planned_turns(self) -> int:
+        if self.phases:
+            return self.total_phase_turns
+        return len(self.beats)
 
 
 class CompletionCriteria(BaseModel):

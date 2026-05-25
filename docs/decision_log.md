@@ -61,3 +61,11 @@ Rationale: Long runs may exceed roleplay model context. Free-form summaries risk
 Decision: Combine turn-level scanning, window-level assessment, final assessment, and human review packets.
 
 Rationale: Long transcripts need scalable scoring and evidence preservation.
+## 2026-05-26: Implement phased story arcs and pacing controls
+
+Decision: Extend scenario schema with `StoryPhase` objects and numeric pacing controls, while retaining backwards compatibility with flat `beats`.
+
+Rationale: ARCS needs reproducible long-context story progression. Phases encode deliberate escalation, directness, obliqueness, emotional intensity, persistence, topic drift, and compliance pressure.
+
+Implementation: Added `StoryPhase`, phase selection helpers, pacing metadata on user transcript events, and converted the smoke scenario to phased form.
+

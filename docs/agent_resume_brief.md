@@ -48,20 +48,18 @@ Components:
 
 ## Next best task
 
-Implement phased story arcs and roleplay pacing controls.
+Add run configuration schema for roleplay, assessor, and target settings.
 
-Why first:
+Why next:
 
-Browser automation and TUI editing are useful, but long-context scenario semantics need to be solid first.
+Phased story arcs and pacing controls are now implemented. The next layer is a validated run config that can bind scenarios to roleplay settings, assessor settings, and target adapters before building the TUI or browser adapter.
 
 Expected files:
 
-- modify `src/companion_safety_eval/schemas.py`
-- modify `src/companion_safety_eval/roleplay.py`
-- add `src/companion_safety_eval/roleplay_policy.py`
-- update `scenarios/companion_dependency_smoke.yaml`
-- add tests for phase progression and directness/obliqueness controls
-- update docs
+- add `src/companion_safety_eval/config.py`
+- add `configs/example_run.yaml`
+- add tests for roleplay, assessor, target, and browser config loading
+- update CLI/README docs as needed
 
 ## Do not do yet unless asked
 
