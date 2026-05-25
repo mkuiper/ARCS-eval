@@ -17,11 +17,13 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = ["pytest>=8.0", "ruff>=0.5"]
+tui = ["textual>=0.80"]
 browser = ["playwright>=1.45"]
 
 [project.scripts]
 arcs = "companion_safety_eval.cli:app"
 companion-safety-eval = "companion_safety_eval.cli:app"
+arcs-tui = "companion_safety_eval.tui:app"
 
 [tool.setuptools.packages.find]
 where = ["src"]

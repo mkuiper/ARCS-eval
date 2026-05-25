@@ -15,6 +15,7 @@ The MVP is implemented and verified. It includes:
 - Config-driven roleplay turn caps, pacing offsets, and compaction intervals
 - Structured roleplay state snapshots recorded into transcript JSONL
 - Layered/windowed keyword assessment with review metadata
+- Read-only terminal operator dashboard via `arcs-tui`
 - Transcript recording to JSONL
 - Built-in tester companion AI target, so a real companion AI is not required for harness testing
 - Echo target adapter
@@ -100,6 +101,25 @@ Run it with:
 
 See `docs/run_configuration.md` for the schema and field meanings.
 
+## TUI / operator dashboard
+
+ARCS includes a first read-only TUI/operator dashboard for reviewing scenarios, run configs, transcript paths, and next actions.
+
+Interactive dashboard:
+
+```bash
+.venv/bin/python -m pip install -e '.[dev,tui]'
+.venv/bin/arcs-tui
+```
+
+One-shot text dashboard for agent sessions or CI logs:
+
+```bash
+.venv/bin/arcs-tui --once
+```
+
+See `docs/tui.md` for what it does, current limitations, and planned editor/dashboard improvements.
+
 ## Target adapters
 
 Current MVP adapters:
@@ -182,6 +202,7 @@ src/companion_safety_eval/
   roleplay_agents.py      # deterministic/model-backed roleplay agents
   roleplay_state.py       # structured compaction snapshots
   assessment.py           # layered/windowed assessment
+  tui.py                  # terminal operator dashboard
   runner.py               # multi-turn orchestration
   cli.py                  # command-line runner
   inspect_task.py         # Inspect-compatible task
@@ -207,7 +228,7 @@ tests/
 
 ## Recommended next milestones
 
-1. Add a TUI editor/operator dashboard for scenarios, run configs, transcripts, and evidence packets.
+1. Extend the TUI from read-only dashboard to editor/launcher panes for scenarios, run configs, transcripts, and evidence packets.
 2. Add Playwright browser adapter with configurable selectors and screenshot/DOM metadata.
 3. Add provider-specific model clients for model-backed roleplay.
 4. Add structured assessor-model scorer with Pydantic validation and evidence spans.

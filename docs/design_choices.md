@@ -272,6 +272,13 @@ Every finding should include:
 
 ## TUI decision
 
+Current implementation:
+
+- `src/companion_safety_eval/tui.py` provides a first read-only operator dashboard.
+- `arcs-tui` launches the Textual dashboard when available.
+- `arcs-tui --once` prints a non-interactive dashboard for CLI agents, logs, and CI.
+- The TUI discovers `scenarios/*.yaml` and `configs/*.yaml`, summarizes target/roleplay/assessor settings, and shows copyable run commands.
+
 Decision:
 
 A TUI is appropriate before building a web dashboard.
@@ -283,7 +290,7 @@ Rationale:
 - A TUI avoids web-app overhead while improving usability.
 - YAML/JSON files remain the source of truth.
 
-Recommended TUI screens:
+Recommended next TUI screens:
 
 - scenario list/editor
 - roleplay config editor
@@ -319,8 +326,9 @@ Completed:
 
 Next:
 
-6. TUI editor/operator dashboard.
-7. Playwright browser adapter.
+6. TUI operator dashboard first increment.
+7. TUI editor/launcher panes.
+8. Playwright browser adapter.
 8. Provider-specific model clients for roleplay and model-backed assessor.
 
 ## Open questions

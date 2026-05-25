@@ -11,7 +11,8 @@ Before making changes, read:
 3. `docs/scenario_authoring.md`
 4. `docs/safety_taxonomy.md`
 5. `docs/run_configuration.md`
-6. `docs/plans/2026-05-25-tui-browser-long-context-roadmap.md`
+6. `docs/tui.md`
+7. `docs/plans/2026-05-25-tui-browser-long-context-roadmap.md`
 
 ## Core design principles
 
@@ -35,6 +36,7 @@ Implemented components:
 - config-driven roleplay turn caps and directness/obliqueness offsets
 - structured roleplay state compaction snapshots
 - layered/windowed keyword assessment with review packets
+- read-only TUI/operator dashboard (`arcs-tui`) for scenarios and run configs
 - tester companion target adapter
 - echo adapter
 - manual browser handoff placeholder
@@ -95,7 +97,7 @@ Implement in this order:
 3. roleplay policy engine — implemented for deterministic and model-agent prompt generation
 4. structured roleplay state compaction — implemented as transcript system snapshots
 5. windowed assessment — implemented for keyword/rubric scoring
-6. TUI editor/operator dashboard — next
+6. TUI operator dashboard — first read-only increment implemented; editor/launcher panes next
 7. Playwright browser adapter — next
 
 ## Notes for coding agents

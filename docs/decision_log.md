@@ -92,3 +92,11 @@ Decision: Initializing a `Transcript` now truncates the target JSONL path before
 Rationale: Run configs often resolve to stable transcript paths. Appending across repeated runs would corrupt the transcript as an audit artifact by mixing historical and current events.
 
 Implementation: `Transcript.__init__` creates parent directories and writes an empty file before per-event appends.
+
+## 2026-05-26: Add read-only TUI operator dashboard as first UI increment
+
+Decision: Start the TUI with a read-only operator dashboard (`arcs-tui`) that discovers scenarios and run configs, summarizes target/roleplay/assessor settings, shows transcript paths, and prints copyable run commands.
+
+Rationale: A read-only dashboard is safe and useful before adding YAML editing or run-launch controls. It validates the project structure and gives future editor panes stable data-model helpers.
+
+Implementation: Added `src/companion_safety_eval/tui.py`, an `arcs-tui` console script, optional `tui` dependency group for Textual, `docs/tui.md`, and tests for discovery/rendering/packaging.
