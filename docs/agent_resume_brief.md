@@ -25,6 +25,7 @@ MVP is implemented and verified:
 - `docs/design_choices.md`
 - `docs/decision_log.md`
 - `docs/scenario_authoring.md`
+- `docs/run_configuration.md`
 - `docs/safety_taxonomy.md`
 - `docs/plans/2026-05-25-tui-browser-long-context-roadmap.md`
 - `src/companion_safety_eval/`
@@ -48,18 +49,18 @@ Components:
 
 ## Next best task
 
-Add run configuration schema for roleplay, assessor, and target settings.
+Implement the full roleplay policy engine on top of phased story arcs and run configs.
 
 Why next:
 
-Phased story arcs and pacing controls are now implemented. The next layer is a validated run config that can bind scenarios to roleplay settings, assessor settings, and target adapters before building the TUI or browser adapter.
+Phased story arcs and run configs are now implemented. The next layer should use config-driven roleplay settings to generate deterministic/model-backed turns, apply directness/obliqueness offsets, and prepare for long-context compaction.
 
 Expected files:
 
-- add `src/companion_safety_eval/config.py`
-- add `configs/example_run.yaml`
-- add tests for roleplay, assessor, target, and browser config loading
-- update CLI/README docs as needed
+- extend `src/companion_safety_eval/roleplay_policy.py`
+- modify `src/companion_safety_eval/roleplay.py` and/or `runner.py`
+- add tests for directness/obliqueness offsets and configured turn caps
+- update docs
 
 ## Do not do yet unless asked
 

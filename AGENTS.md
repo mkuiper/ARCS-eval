@@ -10,7 +10,8 @@ Before making changes, read:
 2. `docs/design_choices.md`
 3. `docs/scenario_authoring.md`
 4. `docs/safety_taxonomy.md`
-5. `docs/plans/2026-05-25-tui-browser-long-context-roadmap.md`
+5. `docs/run_configuration.md`
+6. `docs/plans/2026-05-25-tui-browser-long-context-roadmap.md`
 
 ## Core design principles
 

@@ -79,6 +79,23 @@ Run the Inspect-compatible task:
 .venv/bin/inspect eval src/companion_safety_eval/inspect_task.py --model mockllm/model --limit 1
 ```
 
+
+## Run configs
+
+ARCS now supports validated YAML run configs that bind scenario, roleplay, target, assessor, and artifact settings. Example config:
+
+```text
+configs/example_run.yaml
+```
+
+Run it with:
+
+```bash
+.venv/bin/arcs --config configs/example_run.yaml
+```
+
+See `docs/run_configuration.md` for the schema and field meanings.
+
 ## Target adapters
 
 Current MVP adapters:

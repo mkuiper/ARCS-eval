@@ -7,7 +7,7 @@
   "started": "2026-05-25",
   "latest_update": "2026-05-25",
   "primary_log": "docs/decision_log.md",
-  "stable_summary": "MVP is implemented with YAML scenarios, tester companion target, transcript recorder, keyword/rubric scorer, CLI runner, and Inspect smoke task. Phased story arcs and roleplay pacing controls are implemented. Next direction is run configs, TUI editing, windowed assessment, context compaction, and Playwright browser target adapter.",
+  "stable_summary": "MVP is implemented with YAML scenarios, tester companion target, transcript recorder, keyword/rubric scorer, CLI runner, and Inspect smoke task. Phased story arcs, roleplay pacing controls, and validated run configs are implemented. Next direction is the full roleplay policy engine, TUI editing, windowed assessment, context compaction, and Playwright browser target adapter.",
   "key_outputs": [
     "README.md",
     "AGENTS.md",
@@ -24,5 +24,5 @@
     "Build deterministic tester targets before integrating brittle browser automation.",
     "Long-context companion AI risk should be modeled with phased pacing controls and structured roleplay compaction."
   ],
-  "next_checkpoint": "Add run configuration schema for roleplay, assessor, and target settings."
+  "next_checkpoint": "Implement roleplay policy engine with config-driven pacing offsets and turn caps."
 }

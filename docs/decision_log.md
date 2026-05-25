@@ -68,4 +68,11 @@ Decision: Extend scenario schema with `StoryPhase` objects and numeric pacing co
 Rationale: ARCS needs reproducible long-context story progression. Phases encode deliberate escalation, directness, obliqueness, emotional intensity, persistence, topic drift, and compliance pressure.
 
 Implementation: Added `StoryPhase`, phase selection helpers, pacing metadata on user transcript events, and converted the smoke scenario to phased form.
+## 2026-05-26: Add validated run configuration schema
+
+Decision: Add `RunConfig` YAML support to bind scenarios to roleplay, target, assessor, and artifact settings.
+
+Rationale: Repeatable long-context evals need durable run specs before building the TUI or browser adapter. The config schema also creates a natural editing target for future TUI screens.
+
+Implementation: Added `src/companion_safety_eval/config.py`, `configs/example_run.yaml`, CLI `--config` support, run config docs, and validation tests for tester, HTTP, model, and browser config fields.
 
