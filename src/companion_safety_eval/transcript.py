@@ -24,6 +24,7 @@ class Transcript:
     def __init__(self, path: str | Path):
         self.path = Path(path)
         self.path.parent.mkdir(parents=True, exist_ok=True)
+        self.path.write_text("", encoding="utf-8")
 
     def append(self, event: TranscriptEvent) -> None:
         with self.path.open("a", encoding="utf-8") as f:

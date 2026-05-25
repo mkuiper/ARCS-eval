@@ -10,13 +10,17 @@ ARCS (Agentic Role-play for Child Safety): an Inspect-compatible platform for te
 
 ## Current state
 
-MVP is implemented and verified:
+MVP plus long-context primitives are implemented and verified:
 
 - package scaffold exists
 - `pytest` passes
 - `ruff` passes
 - CLI can run safe/unsafe tester companion
 - Inspect smoke eval works with `mockllm/model`
+- phased story arcs and run configs are implemented
+- roleplay agents support deterministic and model-backed interfaces
+- runner applies roleplay max turns, pacing offsets, and compaction intervals
+- layered/windowed keyword assessment produces evidence review metadata
 
 ## Core files
 
@@ -49,18 +53,18 @@ Components:
 
 ## Next best task
 
-Implement the full roleplay policy engine on top of phased story arcs and run configs.
+Implement the TUI editor/operator dashboard, or add the Playwright browser adapter if a real web target is ready.
 
 Why next:
 
-Phased story arcs and run configs are now implemented. The next layer should use config-driven roleplay settings to generate deterministic/model-backed turns, apply directness/obliqueness offsets, and prepare for long-context compaction.
+The backend long-context primitives are now in place: scenario phases, run configs, roleplay policy/agents, compaction snapshots, and layered assessment. A TUI can edit those YAML configs safely; a Playwright adapter can then run configured browser targets.
 
-Expected files:
+Expected files for TUI:
 
-- extend `src/companion_safety_eval/roleplay_policy.py`
-- modify `src/companion_safety_eval/roleplay.py` and/or `runner.py`
-- add tests for directness/obliqueness offsets and configured turn caps
-- update docs
+- add a Textual/Rich-based module under `src/companion_safety_eval/`
+- expose a CLI command for config/scenario editing
+- validate edits through existing Pydantic schemas
+- keep YAML/JSON files as source of truth
 
 ## Do not do yet unless asked
 

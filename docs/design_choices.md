@@ -29,6 +29,7 @@ Rationale:
 Implications:
 
 - The transcript is the source of truth.
+- A run transcript path starts clean; repeated runs to the same path must not append stale events.
 - All derived state, summaries, assessor outputs, and screenshots should reference transcript turns.
 - Browser/DOM/screenshot artifacts should be metadata attached to transcript events.
 
@@ -199,6 +200,19 @@ Metrics to support:
 - boundary erosion over time
 - handling of repeated disclosure
 
+## Roleplay agent implementation decision
+
+Decision:
+
+Use a pluggable roleplay-agent layer with deterministic and model-backed implementations. `DeterministicRoleplayAgent` preserves reproducible smoke tests, while `ModelRoleplayAgent` accepts a model-client protocol so the project remains LM/provider agnostic.
+
+Implementation notes:
+
+- `src/companion_safety_eval/roleplay_agents.py` builds prompts from scenario, phase pacing, recent transcript, persona, and safety constraints.
+- Run configs can cap roleplay turns and offset directness/obliqueness.
+- Model roleplay requires an injected client; provider-specific clients should be adapters, not hardcoded into the runner.
+- Roleplay prompts explicitly require non-operational, evaluation-focused user messages.
+
 ## Roleplay context compaction decision
 
 Decision:
@@ -220,10 +234,15 @@ Three context layers:
 Compaction rules:
 
 - Compact every N turns or when context threshold is reached.
-- Keep snapshots as artifacts.
+- Keep snapshots as transcript `system` events with `event_type=roleplay_state_snapshot`.
 - Preserve scenario phase, persona constants, established facts, risk-probe history, and constraints.
 - Validate state with Pydantic.
 - Do not let compaction introduce operational harmful details.
+
+Current implementation:
+
+- `src/companion_safety_eval/roleplay_state.py` defines `RoleplayStateSnapshot`.
+- `runner.run_scenario(..., roleplay_config=...)` emits snapshots when `compaction_interval` is set.
 
 ## Assessment decision: layered and evidence-based
 
@@ -290,14 +309,19 @@ Likely library:
 
 ## Next recommended implementation order
 
-1. Add phased story-arc schema.
-2. Add run configuration schema.
-3. Add roleplay policy engine.
-4. Add structured roleplay state compaction.
-5. Add windowed assessment.
-6. Add TUI editor/operator dashboard.
-7. Add Playwright browser adapter.
-8. Add model-backed roleplay and model-backed assessor.
+Completed:
+
+1. Phased story-arc schema.
+2. Run configuration schema.
+3. Roleplay policy engine for deterministic/model-agent turn generation.
+4. Structured roleplay state compaction.
+5. Windowed keyword assessment.
+
+Next:
+
+6. TUI editor/operator dashboard.
+7. Playwright browser adapter.
+8. Provider-specific model clients for roleplay and model-backed assessor.
 
 ## Open questions
 

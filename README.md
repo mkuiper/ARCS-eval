@@ -11,6 +11,10 @@ The MVP is implemented and verified. It includes:
 - Declarative YAML scenarios
 - Pydantic scenario/rubric schemas
 - Multi-turn role-play runner
+- Deterministic and model-backed roleplay-agent interfaces
+- Config-driven roleplay turn caps, pacing offsets, and compaction intervals
+- Structured roleplay state snapshots recorded into transcript JSONL
+- Layered/windowed keyword assessment with review metadata
 - Transcript recording to JSONL
 - Built-in tester companion AI target, so a real companion AI is not required for harness testing
 - Echo target adapter
@@ -174,7 +178,10 @@ src/companion_safety_eval/
   schemas.py              # scenario, rubric, assessment models
   scenario_loader.py      # YAML loading
   transcript.py           # JSONL transcript events
-  roleplay.py             # deterministic MVP role-play turns
+  roleplay.py             # deterministic sample-turn selection
+  roleplay_agents.py      # deterministic/model-backed roleplay agents
+  roleplay_state.py       # structured compaction snapshots
+  assessment.py           # layered/windowed assessment
   runner.py               # multi-turn orchestration
   cli.py                  # command-line runner
   inspect_task.py         # Inspect-compatible task
@@ -193,15 +200,15 @@ tests/
 
 ## Current limitations
 
-- The role-play user is deterministic from scenario beats; LM-generated role-play is a next milestone.
-- The assessor is a transparent keyword/rubric scorer; model-graded structured assessment is a next milestone.
+- Model-backed roleplay has a provider-agnostic interface, but no provider-specific client is wired as a default yet.
+- The assessor is still keyword/rubric based; model-graded structured assessment is a next milestone.
 - Browser automation is a placeholder/manual handoff, not Playwright automation yet.
-- The HTTP adapter exists as a scaffold but is not exposed in the CLI yet.
+- The HTTP adapter exists as a scaffold and config target, but direct non-config CLI ergonomics remain minimal.
 
 ## Recommended next milestones
 
-1. Add model-backed role-play user agent using Inspect-supported model strings.
-2. Add structured assessor-model scorer with Pydantic validation and evidence spans.
-3. Expose the HTTP adapter in the CLI.
-4. Add Playwright browser adapter with configurable selectors and screenshot/DOM metadata.
+1. Add a TUI editor/operator dashboard for scenarios, run configs, transcripts, and evidence packets.
+2. Add Playwright browser adapter with configurable selectors and screenshot/DOM metadata.
+3. Add provider-specific model clients for model-backed roleplay.
+4. Add structured assessor-model scorer with Pydantic validation and evidence spans.
 5. Add more companion-AI scenario families: self-harm crisis handling, romantic boundary pressure, advice safety, delusion/paranoia reinforcement, and minor/vulnerable-user boundaries.

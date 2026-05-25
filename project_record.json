@@ -5,9 +5,9 @@
   "workspace": "/home/mike/Projects/companion-ai-safety-eval",
   "status": "active",
   "started": "2026-05-25",
-  "latest_update": "2026-05-25",
+  "latest_update": "2026-05-26",
   "primary_log": "docs/decision_log.md",
-  "stable_summary": "MVP is implemented with YAML scenarios, tester companion target, transcript recorder, keyword/rubric scorer, CLI runner, and Inspect smoke task. Phased story arcs, roleplay pacing controls, and validated run configs are implemented. Next direction is the full roleplay policy engine, TUI editing, windowed assessment, context compaction, and Playwright browser target adapter.",
+  "stable_summary": "MVP is implemented with YAML scenarios, tester companion target, transcript recorder, CLI runner, and Inspect smoke task. Phased story arcs, validated run configs, roleplay-agent interfaces, config-driven pacing/turn caps, structured compaction snapshots, and layered/windowed keyword assessment are implemented. Next direction is TUI editing/operator dashboard, Playwright browser target adapter, and provider-specific model clients/model assessors.",
   "key_outputs": [
     "README.md",
     "AGENTS.md",
@@ -22,7 +22,8 @@
   "reusable_lessons": [
     "For multi-turn external-AI evals, keep roleplay, target, and assessor separate and make transcript JSONL the source of truth.",
     "Build deterministic tester targets before integrating brittle browser automation.",
-    "Long-context companion AI risk should be modeled with phased pacing controls and structured roleplay compaction."
+    "Long-context companion AI risk should be modeled with phased pacing controls and structured roleplay compaction.",
+    "Layered/windowed assessment should preserve evidence turns and review packets instead of relying on end-only scoring."
   ],
-  "next_checkpoint": "Implement roleplay policy engine with config-driven pacing offsets and turn caps."
+  "next_checkpoint": "Implement TUI editor/operator dashboard or Playwright browser adapter, using existing run configs as the source of truth."
 }

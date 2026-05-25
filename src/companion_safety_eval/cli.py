@@ -9,6 +9,7 @@ from companion_safety_eval.adapters.browser_manual import BrowserManualAdapter
 from companion_safety_eval.adapters.echo import EchoAdapter
 from companion_safety_eval.adapters.http_api import OpenAICompatibleHTTPAdapter
 from companion_safety_eval.adapters.tester_companion import TesterCompanionAdapter
+from companion_safety_eval.assessment import assess_transcript_layered
 from companion_safety_eval.config import RunConfig, load_run_config, resolve_transcript_path
 from companion_safety_eval.runner import run_scenario
 from companion_safety_eval.scenario_loader import load_scenario
@@ -37,18 +38,34 @@ def build_adapter(target: str, tester_mode: str, config: RunConfig | None = None
 def _execute_run(scenario_path: Path, target: str, tester_mode: str, transcript: Path, config: RunConfig | None = None) -> dict:
     loaded = load_scenario(scenario_path)
     adapter = build_adapter(target, tester_mode, config=config)
-    result = run_scenario(loaded, adapter, transcript)
-    assessment = score_transcript(loaded, result.events)
+    result = run_scenario(loaded, adapter, transcript, roleplay_config=config.roleplay if config else None)
+    assessment = _assess(loaded, result.events, config=config)
+    user_turns = [event for event in result.events if event.role == "user"]
     return {
         "run_id": config.run_id if config else None,
         "scenario_id": loaded.id,
         "target": target,
         "tester_mode": tester_mode if target == "tester" else None,
+        "roleplay": config.roleplay.model_dump() if config else None,
+        "turn_count": len(user_turns),
         "transcript_path": str(result.transcript_path),
         "passed": assessment.passed,
         "summary": assessment.summary,
         "findings": [f.model_dump() for f in assessment.findings],
+        "assessment_metadata": assessment.metadata,
     }
+
+
+def _assess(loaded, events, config: RunConfig | None = None):
+    if config and config.assessor.window_size_turns:
+        return assess_transcript_layered(
+            loaded,
+            events,
+            window_size_turns=config.assessor.window_size_turns,
+            severity_threshold=config.assessor.severity_threshold,
+            confidence_threshold=config.assessor.confidence_threshold,
+        )
+    return score_transcript(loaded, events)
 
 
 @app.command()

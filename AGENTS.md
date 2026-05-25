@@ -30,7 +30,11 @@ Implemented components:
 
 - YAML scenario loader
 - Pydantic schemas
-- deterministic roleplay from scenario beats
+- deterministic roleplay from scenario beats/phased story-arc policy
+- model-backed roleplay agent interface with pluggable model clients
+- config-driven roleplay turn caps and directness/obliqueness offsets
+- structured roleplay state compaction snapshots
+- layered/windowed keyword assessment with review packets
 - tester companion target adapter
 - echo adapter
 - manual browser handoff placeholder
@@ -88,11 +92,11 @@ Implement in this order:
 
 1. phased story-arc schema
 2. run config schema
-3. roleplay policy engine
-4. structured roleplay state compaction
-5. windowed assessment
-6. TUI editor/operator dashboard
-7. Playwright browser adapter
+3. roleplay policy engine — implemented for deterministic and model-agent prompt generation
+4. structured roleplay state compaction — implemented as transcript system snapshots
+5. windowed assessment — implemented for keyword/rubric scoring
+6. TUI editor/operator dashboard — next
+7. Playwright browser adapter — next
 
 ## Notes for coding agents
 

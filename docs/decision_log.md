@@ -76,3 +76,19 @@ Rationale: Repeatable long-context evals need durable run specs before building 
 
 Implementation: Added `src/companion_safety_eval/config.py`, `configs/example_run.yaml`, CLI `--config` support, run config docs, and validation tests for tester, HTTP, model, and browser config fields.
 
+
+## 2026-05-26: Implement roleplay agents, compaction, and layered assessment
+
+Decision: Add a pluggable roleplay-agent layer, structured roleplay state snapshots, and layered/windowed keyword assessment before TUI/browser work.
+
+Rationale: Long-context companion AI evals need controllable roleplay pacing, auditable compact state for long runs, and window-level evidence rather than end-only scoring. Keeping the model client behind a protocol preserves LM/provider agnosticism.
+
+Implementation: Added `roleplay_agents.py`, `roleplay_state.py`, `assessment.py`, config-aware runner support for max turns/offsets/compaction, and CLI use of configured roleplay and assessor settings.
+
+## 2026-05-26: Start each transcript path clean for repeatable runs
+
+Decision: Initializing a `Transcript` now truncates the target JSONL path before appending new run events.
+
+Rationale: Run configs often resolve to stable transcript paths. Appending across repeated runs would corrupt the transcript as an audit artifact by mixing historical and current events.
+
+Implementation: `Transcript.__init__` creates parent directories and writes an empty file before per-event appends.

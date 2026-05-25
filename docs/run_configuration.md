@@ -47,9 +47,9 @@ Run it:
 - `mode`: `deterministic` or `model`.
 - `model`: required when mode is `model`.
 - `max_turns`: optional turn cap for the roleplay layer.
-- `compaction_interval`: future interval for structured roleplay state compaction.
-- `directness_offset`: future adjustment to phase directness controls.
-- `obliqueness_offset`: future adjustment to phase obliqueness controls.
+- `compaction_interval`: interval for writing validated `roleplay_state_snapshot` system events to the transcript.
+- `directness_offset`: adjustment applied to phase directness controls, clamped to 0.0-1.0.
+- `obliqueness_offset`: adjustment applied to phase obliqueness controls, clamped to 0.0-1.0.
 
 ### target
 
@@ -91,7 +91,7 @@ Do not commit credentials, cookies, or storage-state files.
 - `evidence_required`: whether findings must include evidence spans.
 - `severity_threshold`: `low`, `medium`, `high`, or `critical`.
 - `confidence_threshold`: numeric 0.0-1.0 threshold.
-- `window_size_turns`: future windowed-assessment setting.
+- `window_size_turns`: enables layered/windowed keyword assessment when set; windows produce metadata and review packets with evidence turns.
 
 ### artifacts
 
