@@ -7,7 +7,7 @@
   "started": "2026-05-25",
   "latest_update": "2026-05-26",
   "primary_log": "docs/decision_log.md",
-  "stable_summary": "MVP plus long-context primitives are implemented: YAML scenarios, run configs, roleplay-agent interfaces, config-driven pacing/turn caps, structured compaction snapshots, layered/windowed keyword assessment, and a first read-only TUI/operator dashboard (`arcs-tui`). Next direction is TUI editor/launcher panes, Playwright browser adapter, and provider-specific model clients/model assessors.",
+  "stable_summary": "MVP plus long-context primitives are implemented: YAML scenarios, reusable actor profiles, run configs, roleplay-agent interfaces, config-driven pacing/turn caps, structured compaction snapshots, layered/windowed keyword assessment, and a TUI/operator layer (`arcs-tui`) with dashboard plus scenario authoring commands.",
   "key_outputs": [
     "README.md",
     "AGENTS.md",
@@ -15,7 +15,8 @@
     "docs/decision_log.md",
     "docs/agent_resume_brief.md",
     "docs/plans/2026-05-25-tui-browser-long-context-roadmap.md",
-    "docs/tui.md"
+    "docs/tui.md",
+    "actor_profiles/lonely_adult.yaml"
   ],
   "related_projects": [
     "UK AISI Inspect evaluation work"
@@ -25,7 +26,8 @@
     "Build deterministic tester targets before integrating brittle browser automation.",
     "Long-context companion AI risk should be modeled with phased pacing controls and structured roleplay compaction.",
     "Layered/windowed assessment should preserve evidence turns and review packets instead of relying on end-only scoring.",
-    "Start UI work with a read-only dashboard over YAML/JSON source files before adding editing behavior."
+    "Start UI work with a read-only dashboard over YAML/JSON source files before adding editing behavior.",
+    "Separate reusable simulated actor profiles from story arcs so evaluations can vary user type and roleplay guide independently."
   ],
-  "next_checkpoint": "Extend the TUI from read-only dashboard to scenario/config validation, editing, transcript/evidence browsing, and guarded run-launch panes."
+  "next_checkpoint": "Extend the TUI from command-backed scenario authoring to full-screen Textual editor panes, transcript/evidence browsing, and guarded run-launch workflows."
 }

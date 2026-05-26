@@ -125,6 +125,26 @@ target:
   capture_dom: true
 ```
 
+## Scenario authoring decision: separate actor profiles from story arcs
+
+Decision:
+
+Separate reusable simulated actor profiles from story arcs / roleplay guides at the authoring layer. Persisted scenario YAML remains backward-compatible by materializing the selected actor into `persona` and `user_type`.
+
+Rationale:
+
+- The same actor can be reused across multiple risk domains.
+- The same story arc pattern can be tested with multiple simulated user types.
+- Experiments become cleaner because actor traits and story pacing are separate variables.
+- TUI editing can present actor, story, completion criteria, and rubric sections independently.
+
+Current implementation:
+
+- Actor profiles live under `actor_profiles/*.yaml`.
+- `src/companion_safety_eval/scenario_editor.py` provides validated authoring helpers.
+- `arcs-tui actor list` lists profiles.
+- `arcs-tui scenario new` pairs an actor with a story/rubric template to create validated scenario YAML.
+
 ## Scenario authoring decision: move from flat beats to phased story arcs
 
 Decision:
@@ -277,7 +297,8 @@ Current implementation:
 - `src/companion_safety_eval/tui.py` provides a first read-only operator dashboard.
 - `arcs-tui` launches the Textual dashboard when available.
 - `arcs-tui --once` prints a non-interactive dashboard for CLI agents, logs, and CI.
-- The TUI discovers `scenarios/*.yaml` and `configs/*.yaml`, summarizes target/roleplay/assessor settings, and shows copyable run commands.
+- The TUI discovers `actor_profiles/*.yaml`, `scenarios/*.yaml`, and `configs/*.yaml`, summarizes target/roleplay/assessor settings, and shows copyable run commands.
+- Scenario-authoring commands now support `show`, `new`, `add-phase`, `set-completion`, and `add-rubric`; all writes validate through Pydantic before saving.
 
 Decision:
 

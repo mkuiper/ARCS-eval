@@ -100,3 +100,11 @@ Decision: Start the TUI with a read-only operator dashboard (`arcs-tui`) that di
 Rationale: A read-only dashboard is safe and useful before adding YAML editing or run-launch controls. It validates the project structure and gives future editor panes stable data-model helpers.
 
 Implementation: Added `src/companion_safety_eval/tui.py`, an `arcs-tui` console script, optional `tui` dependency group for Textual, `docs/tui.md`, and tests for discovery/rendering/packaging.
+
+## 2026-05-26: Add scenario-authoring commands and reusable actor profiles
+
+Decision: Extend `arcs-tui` beyond the read-only dashboard with validated scenario-authoring commands and a reusable `actor_profiles/` library.
+
+Rationale: Story arcs / roleplay guides should be separable from simulated actor types so evaluators can reuse an actor across different risk probes and reuse a story arc pattern across different user types. Completion criteria and scoring rubrics are scenario-authoring primitives and should be editable through the same operator layer.
+
+Implementation: Added `src/companion_safety_eval/scenario_editor.py`, `actor_profiles/lonely_adult.yaml`, `arcs-tui actor list`, `arcs-tui scenario show`, `scenario new`, `scenario add-phase`, `scenario set-completion`, and `scenario add-rubric`. All write paths validate through the Pydantic `Scenario` schema before saving.

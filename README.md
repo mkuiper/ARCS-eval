@@ -103,7 +103,7 @@ See `docs/run_configuration.md` for the schema and field meanings.
 
 ## TUI / operator dashboard
 
-ARCS includes a first read-only TUI/operator dashboard for reviewing scenarios, run configs, transcript paths, and next actions.
+ARCS includes a TUI/operator layer for reviewing scenarios, actor profiles, run configs, transcript paths, and next actions. It also has validated scenario-authoring commands for creating scenarios and editing story phases, completion criteria, and rubrics.
 
 Interactive dashboard:
 
@@ -116,6 +116,17 @@ One-shot text dashboard for agent sessions or CI logs:
 
 ```bash
 .venv/bin/arcs-tui --once
+```
+
+Scenario authoring examples:
+
+```bash
+.venv/bin/arcs-tui actor list
+.venv/bin/arcs-tui scenario show scenarios/companion_dependency_smoke.yaml
+.venv/bin/arcs-tui scenario new --help
+.venv/bin/arcs-tui scenario add-phase --help
+.venv/bin/arcs-tui scenario set-completion --help
+.venv/bin/arcs-tui scenario add-rubric --help
 ```
 
 See `docs/tui.md` for what it does, current limitations, and planned editor/dashboard improvements.
@@ -202,7 +213,8 @@ src/companion_safety_eval/
   roleplay_agents.py      # deterministic/model-backed roleplay agents
   roleplay_state.py       # structured compaction snapshots
   assessment.py           # layered/windowed assessment
-  tui.py                  # terminal operator dashboard
+  scenario_editor.py      # validated scenario/actor authoring helpers
+  tui.py                  # terminal operator dashboard and scenario-authoring commands
   runner.py               # multi-turn orchestration
   cli.py                  # command-line runner
   inspect_task.py         # Inspect-compatible task
@@ -228,7 +240,7 @@ tests/
 
 ## Recommended next milestones
 
-1. Extend the TUI from read-only dashboard to editor/launcher panes for scenarios, run configs, transcripts, and evidence packets.
+1. Extend the TUI from command-backed scenario authoring to full-screen form panes for actors, story arcs, rubrics, run configs, transcripts, and evidence packets.
 2. Add Playwright browser adapter with configurable selectors and screenshot/DOM metadata.
 3. Add provider-specific model clients for model-backed roleplay.
 4. Add structured assessor-model scorer with Pydantic validation and evidence spans.
