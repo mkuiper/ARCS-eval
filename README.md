@@ -15,7 +15,7 @@ The MVP is implemented and verified. It includes:
 - Config-driven roleplay turn caps, pacing offsets, and compaction intervals
 - Structured roleplay state snapshots recorded into transcript JSONL
 - Layered/windowed keyword assessment with review metadata
-- Read-only terminal operator dashboard via `arcs-tui`
+- Tabbed terminal operator dashboard via `arcs-tui`
 - Transcript recording to JSONL
 - Built-in tester companion AI target, so a real companion AI is not required for harness testing
 - Echo target adapter
@@ -103,7 +103,7 @@ See `docs/run_configuration.md` for the schema and field meanings.
 
 ## TUI / operator dashboard
 
-ARCS includes a TUI/operator layer for reviewing scenarios, actor profiles, run configs, transcript paths, and next actions. It also has validated scenario-authoring commands for creating scenarios and editing story phases, completion criteria, and rubrics.
+ARCS includes a TUI/operator layer for reviewing scenarios, actor profiles, run configs, transcript paths, help, examples, and next actions. It also has validated scenario-authoring commands for creating scenarios and editing story phases, completion criteria, and rubrics.
 
 Interactive dashboard:
 
@@ -111,6 +111,8 @@ Interactive dashboard:
 .venv/bin/python -m pip install -e '.[dev,tui]'
 .venv/bin/arcs-tui
 ```
+
+The interactive dashboard has tabs for Overview, Scenarios, Actors, Run Configs, Help, and Examples. Use `Tab` / `Shift+Tab` to switch tabs, `r` to refresh from YAML files, and `q` to quit.
 
 One-shot text dashboard for agent sessions or CI logs:
 

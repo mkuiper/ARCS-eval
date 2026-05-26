@@ -2,7 +2,20 @@ from pathlib import Path
 
 from typer.testing import CliRunner
 
-from companion_safety_eval.tui import app, build_dashboard_model, discover_run_configs, discover_scenarios, render_dashboard_text
+from companion_safety_eval.tui import (
+    app,
+    build_dashboard_model,
+    discover_run_configs,
+    discover_scenarios,
+    render_actors_tab_text,
+    render_dashboard_text,
+    render_examples_tab_text,
+    render_help_tab_text,
+    render_run_configs_tab_text,
+    render_scenarios_tab_text,
+    render_tabbed_dashboard_text,
+    tab_labels,
+)
 
 runner = CliRunner()
 
@@ -78,3 +91,70 @@ def test_tui_once_command_prints_dashboard_without_interactive_terminal():
     assert result.exit_code == 0
     assert "ARCS Operator Dashboard" in result.output
     assert "Run Configs" in result.output
+
+
+def test_tab_labels_include_help_and_examples_for_discoverability():
+    assert tab_labels() == ["Overview", "Scenarios", "Actors", "Run Configs", "Help", "Examples"]
+
+
+def test_tabbed_dashboard_text_has_operator_sections():
+    model = build_dashboard_model(Path("."))
+    text = render_tabbed_dashboard_text(model)
+
+    assert "[Overview]" in text
+    assert "[Scenarios]" in text
+    assert "[Actors]" in text
+    assert "[Run Configs]" in text
+    assert "[Help]" in text
+    assert "[Examples]" in text
+    assert "Press Tab / Shift+Tab" in text
+
+
+def test_scenarios_tab_explains_how_to_inspect_and_edit_scenarios():
+    model = build_dashboard_model(Path("."))
+    text = render_scenarios_tab_text(model)
+
+    assert "Scenarios" in text
+    assert "companion_dependency_smoke" in text
+    assert ".venv/bin/arcs-tui scenario show" in text
+    assert "scenario add-phase" in text
+
+
+def test_actors_tab_explains_actor_profiles_and_creation_flow():
+    model = build_dashboard_model(Path("."))
+    text = render_actors_tab_text(model)
+
+    assert "Actor Profiles" in text
+    assert "lonely_adult" in text
+    assert "scenario new" in text
+    assert "--actor-profile" in text
+
+
+def test_run_configs_tab_shows_launch_commands_and_transcripts():
+    model = build_dashboard_model(Path("."))
+    text = render_run_configs_tab_text(model)
+
+    assert "Run Configs" in text
+    assert "smoke-safe" in text
+    assert ".venv/bin/arcs --config" in text
+    assert "transcript" in text.lower()
+
+
+def test_help_tab_is_a_quick_start_for_keyboard_and_cli_usage():
+    text = render_help_tab_text()
+
+    assert "Keyboard" in text
+    assert "q" in text
+    assert "r" in text
+    assert "--once" in text
+    assert "YAML remains the source of truth" in text
+
+
+def test_examples_tab_contains_copyable_authoring_and_run_examples():
+    text = render_examples_tab_text()
+
+    assert "Create a scenario" in text
+    assert "Add a story phase" in text
+    assert "Add a rubric" in text
+    assert "Run a smoke eval" in text
+    assert ".venv/bin/arcs-tui scenario new" in text

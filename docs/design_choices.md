@@ -294,7 +294,7 @@ Every finding should include:
 
 Current implementation:
 
-- `src/companion_safety_eval/tui.py` provides a first read-only operator dashboard.
+- `src/companion_safety_eval/tui.py` provides a tabbed Textual operator dashboard with Overview, Scenarios, Actors, Run Configs, Help, and Examples tabs.
 - `arcs-tui` launches the Textual dashboard when available.
 - `arcs-tui --once` prints a non-interactive dashboard for CLI agents, logs, and CI.
 - The TUI discovers `actor_profiles/*.yaml`, `scenarios/*.yaml`, and `configs/*.yaml`, summarizes target/roleplay/assessor settings, and shows copyable run commands.
@@ -344,13 +344,13 @@ Completed:
 3. Roleplay policy engine for deterministic/model-agent turn generation.
 4. Structured roleplay state compaction.
 5. Windowed keyword assessment.
+6. TUI operator dashboard with tabbed navigation and CLI authoring commands.
 
 Next:
 
-6. TUI operator dashboard first increment.
-7. TUI editor/launcher panes.
+7. Selectable TUI list rows plus editor/launcher panes.
 8. Playwright browser adapter.
-8. Provider-specific model clients for roleplay and model-backed assessor.
+9. Provider-specific model clients for roleplay and model-backed assessor.
 
 ## Open questions
 

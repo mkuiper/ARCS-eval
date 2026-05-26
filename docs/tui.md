@@ -1,9 +1,10 @@
 # ARCS TUI / Operator Dashboard
 
-The ARCS TUI is a local terminal operator layer over YAML scenario, actor-profile, and run-config files. It now has two layers:
+The ARCS TUI is a local terminal operator layer over YAML scenario, actor-profile, and run-config files. It now has three layers:
 
-1. A read-only dashboard for overview and navigation.
-2. Scenario-authoring commands for validated YAML changes.
+1. A tabbed Textual dashboard for overview, navigation, help, and examples.
+2. A one-shot text dashboard for logs/CI/agent sessions.
+3. Scenario-authoring commands for validated YAML changes.
 
 The source of truth remains repository files, not hidden TUI state:
 
@@ -41,6 +42,21 @@ Interactive Textual dashboard:
 .venv/bin/arcs-tui
 ```
 
+The interactive dashboard is organized into tabs:
+
+- **Overview**: project root, scenario summaries, actor-profile summaries, run-config summaries, next actions, and validation errors.
+- **Scenarios**: scenario list plus copyable commands for inspecting, creating, and editing scenario YAML.
+- **Actors**: reusable simulated-user profiles and reminders about separating actor traits from story arcs.
+- **Run Configs**: launch commands, target/roleplay/assessor summaries, and transcript paths.
+- **Help**: keyboard shortcuts, mental model, and CLI quick start.
+- **Examples**: copyable examples for creating scenarios, adding phases, adding rubrics, and running smoke evals.
+
+Keyboard shortcuts:
+
+- `Tab` / `Shift+Tab`: switch tabs
+- `r`: refresh from YAML files
+- `q`: quit
+
 One-shot non-interactive dashboard, useful for logs/CI/agent sessions:
 
 ```bash
@@ -62,6 +78,7 @@ The dashboard displays:
 - copyable run command for each config
 - recommended next actions and safety reminders
 - validation/parsing errors for malformed scenario/config/actor YAML files
+- tabbed help and examples when Textual is installed
 
 ## Scenario authoring commands
 
@@ -137,7 +154,7 @@ Use `--output some/path.yaml` on edit commands to write a copy instead of overwr
 
 ## Current limitations
 
-The dashboard is still mostly text-first. It has validated authoring commands, but not full-screen form widgets yet.
+The dashboard now has tabbed navigation, help, and examples, but most editing still happens through validated CLI commands rather than full-screen form widgets.
 
 Not implemented yet:
 
@@ -151,7 +168,7 @@ Not implemented yet:
 
 Recommended next TUI iterations:
 
-1. Add full-screen scenario/config selection panes.
+1. Add selectable list rows inside the Scenarios, Actors, and Run Configs tabs.
 2. Add form widgets for actor profile, story phases, completion criteria, and rubric dimensions.
 3. Add validation panels using the existing Pydantic schemas.
 4. Add read-only transcript/evidence packet viewer.

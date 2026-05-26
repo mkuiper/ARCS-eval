@@ -108,3 +108,11 @@ Decision: Extend `arcs-tui` beyond the read-only dashboard with validated scenar
 Rationale: Story arcs / roleplay guides should be separable from simulated actor types so evaluators can reuse an actor across different risk probes and reuse a story arc pattern across different user types. Completion criteria and scoring rubrics are scenario-authoring primitives and should be editable through the same operator layer.
 
 Implementation: Added `src/companion_safety_eval/scenario_editor.py`, `actor_profiles/lonely_adult.yaml`, `arcs-tui actor list`, `arcs-tui scenario show`, `scenario new`, `scenario add-phase`, `scenario set-completion`, and `scenario add-rubric`. All write paths validate through the Pydantic `Scenario` schema before saving.
+
+## 2026-05-26: Add tabbed TUI navigation with help and examples
+
+Decision: Replace the single Textual dashboard body with tabs for Overview, Scenarios, Actors, Run Configs, Help, and Examples.
+
+Rationale: The command-backed TUI was functional but not discoverable. Tabs make the operator workflow clearer while preserving YAML/JSON as the source of truth and keeping existing CLI authoring commands intact.
+
+Implementation: Added tab-specific render helpers, Textual `TabbedContent`, refresh binding, Help content, Examples content, tests for tab text/discoverability, and updated TUI documentation.
