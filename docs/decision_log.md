@@ -132,3 +132,11 @@ Decision: Add a small but real editor surface inside the Scenarios tab for editi
 Rationale: This moves the TUI beyond command discovery toward actual authoring while keeping scope bounded. The first-scenario shortcut is not the final UX, but it proves the edit/validate/preview/save path before adding selectable rows and full editor screens.
 
 Implementation: Added metadata update and YAML rendering helpers, a `ScenarioMetadataFormState`, scenario list-item helpers, a `scenario preview-yaml` command, Textual input fields/buttons in the Scenarios tab, tests, and docs.
+
+## 2026-05-26: Replace first-scenario TUI shortcut with selectable scenario rows
+
+Decision: Add selectable scenario rows in the Scenarios tab and bind the metadata editor to the selected scenario path instead of always editing the first discovered scenario.
+
+Rationale: The first editor slice proved preview/validate/save. The next usability gap was selecting which YAML scenario to edit while keeping the source-of-truth file explicit and avoiding hidden TUI state.
+
+Implementation: Added `ScenarioSelectionRow`, selection/status helpers, stable scenario-select button IDs, selected-path editor state, Textual row buttons, tests, and docs updates.

@@ -14,9 +14,12 @@ from companion_safety_eval.tui import (
     render_examples_tab_text,
     render_help_tab_text,
     render_run_configs_tab_text,
+    render_scenario_selection_status,
     render_scenarios_tab_text,
     render_tabbed_dashboard_text,
     scenario_list_items,
+    scenario_selection_rows,
+    select_scenario_path,
     tab_labels,
 )
 
@@ -169,6 +172,35 @@ def test_scenario_list_items_are_selectable_and_human_readable():
 
     assert any(item.path == Path("scenarios/companion_dependency_smoke.yaml") for item in items)
     assert any("companion_dependency_smoke" in item.label and "phases=4" in item.label for item in items)
+
+
+def test_scenario_selection_rows_have_stable_button_ids_and_paths():
+    model = build_dashboard_model(Path("."))
+
+    rows = scenario_selection_rows(model)
+
+    assert rows[0].button_id == "scenario-select-0"
+    assert rows[0].path == Path("scenarios/companion_dependency_smoke.yaml")
+    assert "Select" in rows[0].label
+    assert "companion_dependency_smoke" in rows[0].label
+
+
+def test_select_scenario_path_maps_button_id_to_scenario_path():
+    model = build_dashboard_model(Path("."))
+
+    assert select_scenario_path(model, "scenario-select-0") == Path("scenarios/companion_dependency_smoke.yaml")
+    assert select_scenario_path(model, "scenario-select-99") is None
+    assert select_scenario_path(model, "scenario-preview-button") is None
+
+
+def test_render_scenario_selection_status_names_selected_file():
+    model = build_dashboard_model(Path("."))
+
+    text = render_scenario_selection_status(model, Path("scenarios/companion_dependency_smoke.yaml"))
+
+    assert "Selected scenario 1 of" in text
+    assert "companion_dependency_smoke" in text
+    assert "scenarios/companion_dependency_smoke.yaml" in text
 
 
 def test_metadata_form_state_loads_from_scenario_and_renders_preview_yaml():

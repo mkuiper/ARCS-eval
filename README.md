@@ -112,7 +112,7 @@ Interactive dashboard:
 .venv/bin/arcs-tui
 ```
 
-The interactive dashboard has tabs for Overview, Scenarios, Actors, Run Configs, Help, and Examples. Use `Tab` / `Shift+Tab` to switch tabs, `r` to refresh from YAML files, and `q` to quit. The Scenarios tab now includes the first in-TUI metadata editor slice for the first scenario: edit title, risk domain, and safety notes, preview normalized YAML, then save through schema validation.
+The interactive dashboard has tabs for Overview, Scenarios, Actors, Run Configs, Help, and Examples. Use `Tab` / `Shift+Tab` to switch tabs, `r` to refresh from YAML files, and `q` to quit. The Scenarios tab now includes selectable scenario rows plus an in-TUI metadata editor: pick a scenario, edit title, risk domain, and safety notes, preview normalized YAML, then save through schema validation.
 
 One-shot text dashboard for agent sessions or CI logs:
 

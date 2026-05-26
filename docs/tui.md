@@ -2,7 +2,7 @@
 
 The ARCS TUI is a local terminal operator layer over YAML scenario, actor-profile, and run-config files. It now has three layers:
 
-1. A tabbed Textual dashboard for overview, navigation, help, and examples.
+1. A tabbed Textual dashboard for overview, scenario selection, navigation, help, and examples.
 2. A one-shot text dashboard for logs/CI/agent sessions.
 3. Scenario-authoring commands for validated YAML changes.
 
@@ -45,7 +45,7 @@ Interactive Textual dashboard:
 The interactive dashboard is organized into tabs:
 
 - **Overview**: project root, scenario summaries, actor-profile summaries, run-config summaries, next actions, and validation errors.
-- **Scenarios**: scenario list plus copyable commands for inspecting, creating, and editing scenario YAML. This tab also includes the first direct in-TUI metadata editor slice for the first scenario: title, risk domain, safety notes, YAML preview, and validated save.
+- **Scenarios**: scenario list plus copyable commands for inspecting, creating, and editing scenario YAML. This tab also includes selectable scenario rows and a direct in-TUI metadata editor for the selected scenario: title, risk domain, safety notes, YAML preview, and validated save.
 - **Actors**: reusable simulated-user profiles and reminders about separating actor traits from story arcs.
 - **Run Configs**: launch commands, target/roleplay/assessor summaries, and transcript paths.
 - **Help**: keyboard shortcuts, mental model, and CLI quick start.
@@ -57,15 +57,16 @@ Keyboard shortcuts:
 - `r`: refresh from YAML files
 - `q`: quit
 
-First in-TUI editing slice:
+In-TUI scenario metadata editing:
 
 1. Open `.venv/bin/arcs-tui`.
 2. Switch to the Scenarios tab.
-3. Edit the first scenario's title, risk domain, or safety notes in the visible fields.
-4. Press **Preview YAML** to validate and inspect normalized YAML.
-5. Press **Save metadata** to write the validated scenario YAML back to disk.
+3. Pick a scenario row using the **Select ...** buttons.
+4. Edit the selected scenario's title, risk domain, or safety notes in the visible fields.
+5. Press **Preview YAML** to validate and inspect normalized YAML.
+6. Press **Save metadata** to write the validated scenario YAML back to disk.
 
-This is intentionally a small editor slice. The next increment should replace the first-scenario shortcut with selectable scenario rows and dedicated editor screens for story phases, rubrics, and completion criteria.
+This is intentionally still a small editor slice. The first-scenario shortcut has been replaced with selectable scenario rows; the next increment should add dedicated editor screens for story phases, rubrics, completion criteria, and run launch controls.
 
 One-shot non-interactive dashboard, useful for logs/CI/agent sessions:
 
@@ -170,11 +171,10 @@ Use `--output some/path.yaml` on edit commands to write a copy instead of overwr
 
 ## Current limitations
 
-The dashboard now has tabbed navigation, help, examples, and a first direct metadata editor slice for scenario title/risk/safety notes. Most deeper editing still happens through validated CLI commands rather than full-screen form widgets.
+The dashboard now has tabbed navigation, help, examples, selectable scenario rows, and a direct metadata editor slice for scenario title/risk/safety notes. Most deeper editing still happens through validated CLI commands rather than full-screen form widgets.
 
 Not implemented yet:
 
-- selectable scenario rows connected to dedicated editor screens
 - full Textual form panes/dropdowns for actor profiles, story phases, completion criteria, and rubrics
 - detailed validation error panels with field-level navigation
 - transcript/evidence browsing screens
@@ -185,8 +185,8 @@ Not implemented yet:
 
 Recommended next TUI iterations:
 
-1. Add selectable list rows inside the Scenarios, Actors, and Run Configs tabs, replacing the current first-scenario metadata shortcut.
-2. Add form widgets for actor profile, story phases, completion criteria, and rubric dimensions.
+1. Add dedicated editor screens for the selected scenario's actor profile, story phases, completion criteria, and rubric dimensions.
+2. Add selectable list rows inside the Actors and Run Configs tabs.
 3. Add validation panels using the existing Pydantic schemas.
 4. Add read-only transcript/evidence packet viewer.
 5. Add guarded run launcher for `.venv/bin/arcs --config ...`.

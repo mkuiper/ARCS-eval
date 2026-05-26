@@ -36,7 +36,7 @@ Implemented components:
 - config-driven roleplay turn caps and directness/obliqueness offsets
 - structured roleplay state compaction snapshots
 - layered/windowed keyword assessment with review packets
-- tabbed TUI/operator dashboard (`arcs-tui`) with scenario show/new/add-phase/set-completion/add-rubric/preview-yaml commands plus help/examples tabs and a first in-TUI scenario metadata editor slice
+- tabbed TUI/operator dashboard (`arcs-tui`) with scenario show/new/add-phase/set-completion/add-rubric/preview-yaml commands plus help/examples tabs, selectable scenario rows, and an in-TUI selected-scenario metadata editor slice
 - tester companion target adapter
 - echo adapter
 - manual browser handoff placeholder
@@ -97,7 +97,7 @@ Implement in this order:
 3. roleplay policy engine — implemented for deterministic and model-agent prompt generation
 4. structured roleplay state compaction — implemented as transcript system snapshots
 5. windowed assessment — implemented for keyword/rubric scoring
-6. TUI operator dashboard — tabbed navigation, scenario authoring commands, preview-yaml, and first metadata editor slice implemented; selectable rows, full-screen editor forms, and launcher panes next
+6. TUI operator dashboard — tabbed navigation, scenario authoring commands, preview-yaml, selectable scenario rows, and metadata editor slice implemented; full-screen editor forms and launcher panes next
 7. Playwright browser adapter — next
 
 ## Notes for coding agents

@@ -47,6 +47,14 @@ class ScenarioListItem:
     path: Path
 
 
+@dataclass(frozen=True)
+class ScenarioSelectionRow:
+    index: int
+    label: str
+    path: Path
+    button_id: str
+
+
 @dataclass
 class ScenarioMetadataFormState:
     path: Path
@@ -157,6 +165,43 @@ def scenario_list_items(model: DashboardModel) -> list[ScenarioListItem]:
         )
         for scenario in model.scenarios
     ]
+
+
+def scenario_selection_rows(model: DashboardModel) -> list[ScenarioSelectionRow]:
+    return [
+        ScenarioSelectionRow(
+            index=index,
+            label=f"Select {scenario.id} | {scenario.risk_domain} | actor={scenario.user_type} | phases={scenario.phase_count}",
+            path=scenario.path,
+            button_id=f"scenario-select-{index}",
+        )
+        for index, scenario in enumerate(model.scenarios)
+    ]
+
+
+def select_scenario_path(model: DashboardModel, button_id: str) -> Path | None:
+    prefix = "scenario-select-"
+    if not button_id.startswith(prefix):
+        return None
+    try:
+        index = int(button_id.removeprefix(prefix))
+    except ValueError:
+        return None
+    rows = scenario_selection_rows(model)
+    if index < 0 or index >= len(rows):
+        return None
+    return rows[index].path
+
+
+def render_scenario_selection_status(model: DashboardModel, selected_path: Path | None) -> str:
+    if not model.scenarios:
+        return "No scenario selected because no scenario YAML files were found."
+    if selected_path is None:
+        selected_path = model.scenarios[0].path
+    for index, scenario in enumerate(model.scenarios, start=1):
+        if scenario.path == selected_path:
+            return f"Selected scenario {index} of {len(model.scenarios)}: {scenario.id} ({scenario.path})"
+    return f"Selected scenario path is not in the current dashboard model: {selected_path}"
 
 
 def render_dashboard_text(model: DashboardModel) -> str:
@@ -377,6 +422,11 @@ def run_textual_dashboard(project_root: Path) -> None:
         TITLE = "ARCS Operator Dashboard"
         BINDINGS = [("q", "quit", "Quit"), ("r", "refresh", "Refresh")]
 
+        def __init__(self) -> None:
+            super().__init__()
+            model = build_dashboard_model(project_root)
+            self.selected_scenario_path: Path | None = model.scenarios[0].path if model.scenarios else None
+
         def compose(self) -> ComposeResult:
             model = build_dashboard_model(project_root)
             yield Header()
@@ -386,13 +436,16 @@ def run_textual_dashboard(project_root: Path) -> None:
                 with TabPane("Scenarios", id="scenarios"):
                     yield Static(render_scenarios_tab_text(model), id="scenarios-body")
                     if model.scenarios:
-                        first_scenario_path = project_root / model.scenarios[0].path
-                        metadata_state = ScenarioMetadataFormState.from_path(first_scenario_path)
+                        selected_relative_path = self.selected_scenario_path or model.scenarios[0].path
+                        metadata_state = ScenarioMetadataFormState.from_path(project_root / selected_relative_path)
                         yield Static(
-                            "\nQuick metadata editor for the first scenario. "
-                            "This is the first in-TUI editing slice; fuller scenario selection/editing is next.",
+                            "\nScenario selector and metadata editor. Pick a scenario row, edit title/risk/safety notes, "
+                            "preview YAML, then save validated changes.",
                             id="scenario-editor-intro",
                         )
+                        for row in scenario_selection_rows(model):
+                            yield Button(row.label, id=row.button_id)
+                        yield Static(render_scenario_selection_status(model, selected_relative_path), id="scenario-selection-status")
                         yield Static(f"Editing: {metadata_state.path}", id="scenario-editor-path")
                         yield Input(metadata_state.title, placeholder="Scenario title", id="scenario-title-input")
                         yield Input(metadata_state.risk_domain, placeholder="Risk domain", id="scenario-risk-domain-input")
@@ -414,13 +467,33 @@ def run_textual_dashboard(project_root: Path) -> None:
             model = build_dashboard_model(project_root)
             if not model.scenarios:
                 raise ValueError("No scenario is available to edit.")
-            state = ScenarioMetadataFormState.from_path(project_root / model.scenarios[0].path)
+            selected_relative_path = self.selected_scenario_path or model.scenarios[0].path
+            state = ScenarioMetadataFormState.from_path(project_root / selected_relative_path)
             state.title = self.query_one("#scenario-title-input", Input).value
             state.risk_domain = self.query_one("#scenario-risk-domain-input", Input).value
             state.safety_notes_text = self.query_one("#scenario-safety-notes-input", TextArea).text
             return state
 
+        def _load_selected_scenario_into_editor(self, relative_path: Path) -> None:
+            model = build_dashboard_model(project_root)
+            state = ScenarioMetadataFormState.from_path(project_root / relative_path)
+            self.selected_scenario_path = relative_path
+            self.query_one("#scenario-title-input", Input).value = state.title
+            self.query_one("#scenario-risk-domain-input", Input).value = state.risk_domain
+            self.query_one("#scenario-safety-notes-input", TextArea).text = state.safety_notes_text
+            self.query_one("#scenario-selection-status", Static).update(render_scenario_selection_status(model, relative_path))
+            self.query_one("#scenario-editor-path", Static).update(f"Editing: {state.path}")
+            self.query_one("#scenario-editor-status", Static).update(f"Loaded scenario metadata from {state.path}")
+
         def on_button_pressed(self, event: Button.Pressed) -> None:
+            model = build_dashboard_model(project_root)
+            selected_path = select_scenario_path(model, event.button.id or "")
+            if selected_path is not None:
+                try:
+                    self._load_selected_scenario_into_editor(selected_path)
+                except Exception as exc:  # noqa: BLE001 - TUI should show validation errors instead of crashing
+                    self.query_one("#scenario-editor-status", Static).update(f"Could not load selected scenario: {exc}")
+                return
             if event.button.id not in {"scenario-preview-button", "scenario-save-button"}:
                 return
             status = self.query_one("#scenario-editor-status", Static)
