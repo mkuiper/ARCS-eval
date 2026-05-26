@@ -116,3 +116,11 @@ Decision: Replace the single Textual dashboard body with tabs for Overview, Scen
 Rationale: The command-backed TUI was functional but not discoverable. Tabs make the operator workflow clearer while preserving YAML/JSON as the source of truth and keeping existing CLI authoring commands intact.
 
 Implementation: Added tab-specific render helpers, Textual `TabbedContent`, refresh binding, Help content, Examples content, tests for tab text/discoverability, and updated TUI documentation.
+
+## 2026-05-26: Reframe next TUI work around in-app editing
+
+Decision: Treat the current tabbed TUI as a discoverability layer, not the final user experience. The next TUI milestone should be a structured in-terminal scenario editor with selectable rows, form fields, validation, YAML preview, and explicit save confirmation.
+
+Rationale: A TUI that only explains commands is not intuitive enough for average users. Raw JSON/YAML editing is better than commands but still requires schema knowledge. Structured domain forms for metadata, actor/persona, story phases, completion criteria, rubrics, and safety notes should be the primary interface; raw YAML preview can be secondary.
+
+Implementation plan: Added `docs/plans/2026-05-26-in-tui-scenario-editor.md`.
