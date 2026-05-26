@@ -125,9 +125,11 @@ Scenario authoring examples:
 ```bash
 .venv/bin/arcs-tui actor list
 .venv/bin/arcs-tui scenario show scenarios/companion_dependency_smoke.yaml
+.venv/bin/arcs-tui scenario phases scenarios/companion_dependency_smoke.yaml
 .venv/bin/arcs-tui scenario preview-yaml scenarios/companion_dependency_smoke.yaml
 .venv/bin/arcs-tui scenario new --help
 .venv/bin/arcs-tui scenario add-phase --help
+.venv/bin/arcs-tui scenario set-phase --help
 .venv/bin/arcs-tui scenario set-completion --help
 .venv/bin/arcs-tui scenario add-rubric --help
 ```

@@ -16,9 +16,11 @@ from companion_safety_eval.scenario_editor import (
     load_scenario_editor_model,
     render_payload_yaml,
     render_scenario_editor_text,
+    render_story_phase_editor_text,
     save_scenario_payload,
     update_completion_criteria,
     update_scenario_metadata,
+    update_story_phase,
 )
 from companion_safety_eval.scenario_loader import load_scenario
 
@@ -541,6 +543,12 @@ def scenario_show(path: Path):
     typer.echo(render_scenario_editor_text(load_scenario_editor_model(path)))
 
 
+@scenario_app.command("phases")
+def scenario_phases(path: Path):
+    """Render story phases and copyable set-phase commands for one scenario."""
+    typer.echo(render_story_phase_editor_text(load_scenario_editor_model(path)))
+
+
 @scenario_app.command("preview-yaml")
 def scenario_preview_yaml(path: Path):
     """Render normalized scenario YAML without writing changes."""
@@ -625,6 +633,43 @@ def scenario_set_completion(
     destination = output or path
     save_scenario_payload(payload, destination)
     typer.echo(f"Wrote validated scenario with updated completion criteria: {destination}")
+
+
+@scenario_app.command("set-phase")
+def scenario_set_phase(
+    path: Path,
+    phase_id: str = typer.Option(..., help="Existing phase id to replace."),
+    objective: str = typer.Option(..., help="Updated phase objective."),
+    turns: int = typer.Option(..., min=1, help="Number of user turns in the phase."),
+    risk_probe: str = typer.Option("none", help="Risk probe label."),
+    directness: float = typer.Option(0.0, min=0.0, max=1.0),
+    obliqueness: float = typer.Option(0.0, min=0.0, max=1.0),
+    emotional_intensity: float = typer.Option(0.0, min=0.0, max=1.0),
+    persistence: float = typer.Option(0.0, min=0.0, max=1.0),
+    topic_drift: float = typer.Option(0.0, min=0.0, max=1.0),
+    compliance_pressure: float = typer.Option(0.0, min=0.0, max=1.0),
+    sample_user_turn: list[str] = typer.Option([], help="Sample user turn; can be provided multiple times."),
+    output: Path | None = typer.Option(None, help="Output path. Defaults to overwriting the source scenario."),
+):
+    """Replace one existing story-arc phase and save a validated scenario YAML."""
+    scenario = load_scenario(path)
+    payload = update_story_phase(
+        scenario.model_dump(mode="json"),
+        phase_id=phase_id,
+        objective=objective,
+        turns=turns,
+        risk_probe=risk_probe,
+        directness=directness,
+        obliqueness=obliqueness,
+        emotional_intensity=emotional_intensity,
+        persistence=persistence,
+        topic_drift=topic_drift,
+        compliance_pressure=compliance_pressure,
+        sample_user_turns=sample_user_turn,
+    )
+    destination = output or path
+    save_scenario_payload(payload, destination)
+    typer.echo(f"Wrote validated scenario with updated phase {phase_id}: {destination}")
 
 
 @scenario_app.command("add-rubric")

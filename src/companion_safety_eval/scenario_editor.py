@@ -112,6 +112,35 @@ def render_scenario_editor_text(model: ScenarioEditorModel) -> str:
     return "\n".join(lines)
 
 
+def render_story_phase_editor_text(model: ScenarioEditorModel) -> str:
+    lines = [
+        "Story Phase Editor",
+        f"Path: {model.path}",
+        f"Scenario: {model.scenario_id}",
+        f"Goal: {model.story.goal}",
+        "",
+        "Existing phases",
+    ]
+    if not model.story.phases:
+        lines.append("- none; add one with scenario add-phase")
+    for index, phase in enumerate(model.story.phases, start=1):
+        lines.extend(
+            [
+                f"- phase {index}: {phase.id}",
+                f"  objective: {phase.objective}",
+                f"  turns: {phase.turns}",
+                f"  risk_probe: {phase.risk_probe}",
+                f"  pacing: directness={phase.directness}, obliqueness={phase.obliqueness}, "
+                f"emotional_intensity={phase.emotional_intensity}, persistence={phase.persistence}, "
+                f"topic_drift={phase.topic_drift}, compliance_pressure={phase.compliance_pressure}",
+                f"  sample_user_turns: {' | '.join(phase.sample_user_turns) if phase.sample_user_turns else 'none'}",
+                "  update: .venv/bin/arcs-tui scenario set-phase "
+                f"{model.path} --phase-id {phase.id} --objective <text> --turns {phase.turns}",
+            ]
+        )
+    return "\n".join(lines)
+
+
 def add_story_phase(
     payload: dict[str, Any],
     phase_id: str,
@@ -141,11 +170,48 @@ def add_story_phase(
         sample_user_turns=[sample_user_turn] if sample_user_turn else [],
     )
     updated.setdefault("story_arc", {}).setdefault("phases", []).append(phase.model_dump(mode="json"))
-    planned_turns = sum(item["turns"] for item in updated["story_arc"]["phases"])
-    updated["turn_budget"] = planned_turns
-    updated.setdefault("completion_criteria", {})["max_turns"] = planned_turns
+    _sync_turn_counts(updated)
     _validate_payload(updated)
     return updated
+
+
+def update_story_phase(
+    payload: dict[str, Any],
+    phase_id: str,
+    objective: str,
+    turns: int,
+    risk_probe: str = "none",
+    directness: float = 0.0,
+    obliqueness: float = 0.0,
+    emotional_intensity: float = 0.0,
+    persistence: float = 0.0,
+    topic_drift: float = 0.0,
+    compliance_pressure: float = 0.0,
+    sample_user_turns: list[str] | None = None,
+) -> dict[str, Any]:
+    updated = _copy_payload(payload)
+    phases = updated.setdefault("story_arc", {}).setdefault("phases", [])
+    for index, existing in enumerate(phases):
+        if existing.get("id") != phase_id:
+            continue
+        phase = StoryPhase(
+            id=phase_id,
+            turns=turns,
+            objective=objective,
+            risk_probe=risk_probe,
+            directness=directness,
+            obliqueness=obliqueness,
+            emotional_intensity=emotional_intensity,
+            persistence=persistence,
+            topic_drift=topic_drift,
+            compliance_pressure=compliance_pressure,
+            sample_user_turns=sample_user_turns or [],
+        )
+        phases[index] = phase.model_dump(mode="json")
+        _sync_turn_counts(updated)
+        _validate_payload(updated)
+        return updated
+    raise ValueError(f"Story phase not found: {phase_id}")
 
 
 def update_completion_criteria(payload: dict[str, Any], max_turns: int, stop_if_any: list[str]) -> dict[str, Any]:
@@ -286,6 +352,15 @@ def save_scenario_payload(payload: dict[str, Any], output_path: Path) -> None:
 
 def _validate_payload(payload: dict[str, Any]) -> Scenario:
     return Scenario.model_validate(payload)
+
+
+def _sync_turn_counts(payload: dict[str, Any]) -> None:
+    phases = payload.get("story_arc", {}).get("phases", [])
+    if not phases:
+        return
+    planned_turns = sum(item["turns"] for item in phases)
+    payload["turn_budget"] = planned_turns
+    payload.setdefault("completion_criteria", {})["max_turns"] = planned_turns
 
 
 def _copy_payload(payload: dict[str, Any]) -> dict[str, Any]:

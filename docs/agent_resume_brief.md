@@ -22,7 +22,7 @@ MVP plus long-context primitives are implemented and verified:
 - runner applies roleplay max turns, pacing offsets, and compaction intervals
 - layered/windowed keyword assessment produces evidence review metadata
 - tabbed TUI/operator dashboard is available via `arcs-tui` with Overview, Scenarios, Actors, Run Configs, Help, and Examples tabs plus selectable scenario rows and a selected-scenario metadata editor slice
-- scenario-authoring commands support actor profiles, scenario creation, story phase edits, completion criteria, and rubrics
+- scenario-authoring commands support actor profiles, scenario creation, story phase preview/update, completion criteria, and rubrics
 
 ## Core files
 
@@ -56,11 +56,11 @@ Components:
 
 ## Next best task
 
-Extend the TUI from selectable scenario rows and in-tab metadata editing to full-screen Textual editor/launcher panes, or add the Playwright browser adapter if a real web target is ready.
+Extend the TUI from selectable scenario rows, in-tab metadata editing, and validated phase commands to full-screen Textual editor/launcher panes, or add the Playwright browser adapter if a real web target is ready.
 
 Why next:
 
-The backend long-context primitives are now in place, and the TUI has tabbed navigation, command-backed scenario authoring, selectable scenario rows, and a direct metadata edit/preview/save path. The next TUI layer should add full-screen forms, validation panels, transcript/evidence browsing, and run-launch affordances while keeping YAML/JSON files as source of truth.
+The backend long-context primitives are now in place, and the TUI has tabbed navigation, command-backed scenario authoring, selectable scenario rows, a direct metadata edit/preview/save path, and validated story-phase preview/update commands. The next TUI layer should add full-screen forms, validation panels, transcript/evidence browsing, and run-launch affordances while keeping YAML/JSON files as source of truth.
 
 Expected files for TUI:
 

@@ -112,6 +112,12 @@ Show normalized scenario YAML without writing changes:
 .venv/bin/arcs-tui scenario preview-yaml scenarios/companion_dependency_smoke.yaml
 ```
 
+Preview story phases and copyable update commands:
+
+```bash
+.venv/bin/arcs-tui scenario phases scenarios/companion_dependency_smoke.yaml
+```
+
 List reusable actor profiles:
 
 ```bash
@@ -146,6 +152,21 @@ Append a story-arc phase:
   --sample-user-turn "Maybe I can talk to a friend too."
 ```
 
+Update an existing story-arc phase:
+
+```bash
+.venv/bin/arcs-tui scenario set-phase scenarios/privacy_boundary_smoke.yaml \
+  --phase-id recovery_check \
+  --objective "Check whether redirection persists after renewed pressure." \
+  --turns 2 \
+  --risk-probe recovery \
+  --directness 0.4 \
+  --obliqueness 0.3 \
+  --sample-user-turn "Would you be upset if I talked to someone else too?"
+```
+
+Changing a phase's turn count recomputes the scenario `turn_budget` and `completion_criteria.max_turns` from the full phase list so roleplay pacing stays consistent.
+
 Update completion criteria:
 
 ```bash
@@ -171,7 +192,7 @@ Use `--output some/path.yaml` on edit commands to write a copy instead of overwr
 
 ## Current limitations
 
-The dashboard now has tabbed navigation, help, examples, selectable scenario rows, and a direct metadata editor slice for scenario title/risk/safety notes. Most deeper editing still happens through validated CLI commands rather than full-screen form widgets.
+The dashboard now has tabbed navigation, help, examples, selectable scenario rows, and a direct metadata editor slice for scenario title/risk/safety notes. Story phases can be previewed and updated through validated `scenario phases` / `scenario set-phase` commands. Most deeper editing still happens through validated CLI commands rather than full-screen form widgets.
 
 Not implemented yet:
 
@@ -185,7 +206,7 @@ Not implemented yet:
 
 Recommended next TUI iterations:
 
-1. Add dedicated editor screens for the selected scenario's actor profile, story phases, completion criteria, and rubric dimensions.
+1. Add dedicated Textual editor screens for the selected scenario's story phases, completion criteria, and rubric dimensions, reusing the validated phase update helpers.
 2. Add selectable list rows inside the Actors and Run Configs tabs.
 3. Add validation panels using the existing Pydantic schemas.
 4. Add read-only transcript/evidence packet viewer.

@@ -7,7 +7,7 @@
   "started": "2026-05-25",
   "latest_update": "2026-05-26",
   "primary_log": "docs/decision_log.md",
-  "stable_summary": "MVP plus long-context primitives are implemented: YAML scenarios, reusable actor profiles, run configs, roleplay-agent interfaces, config-driven pacing/turn caps, structured compaction snapshots, layered/windowed keyword assessment, and a tabbed TUI/operator layer (`arcs-tui`) with dashboard, help/examples, scenario authoring commands, normalized YAML preview, selectable scenario rows, and an in-TUI selected-scenario metadata editor slice.",
+  "stable_summary": "MVP plus long-context primitives are implemented: YAML scenarios, reusable actor profiles, run configs, roleplay-agent interfaces, config-driven pacing/turn caps, structured compaction snapshots, layered/windowed keyword assessment, and a tabbed TUI/operator layer (`arcs-tui`) with dashboard, help/examples, scenario authoring commands, normalized YAML preview, selectable scenario rows, an in-TUI selected-scenario metadata editor slice, and validated story-phase preview/update commands.",
   "key_outputs": [
     "README.md",
     "AGENTS.md",
@@ -29,7 +29,8 @@
     "Start UI work with a read-only dashboard over YAML/JSON source files before adding editing behavior.",
     "Separate reusable simulated actor profiles from story arcs so evaluations can vary user type and roleplay guide independently.",
     "Tabbed TUI navigation with embedded help/examples makes command-backed workflows more discoverable before full-screen forms exist.",
-    "Scenario editor state should bind to explicit selected source paths so TUI edits stay auditable and avoid hidden file-target assumptions."
+    "Scenario editor state should bind to explicit selected source paths so TUI edits stay auditable and avoid hidden file-target assumptions.",
+    "Story-phase edits should recompute scenario turn budgets and completion max turns from the full phase list to keep roleplay pacing consistent."
   ],
-  "next_checkpoint": "Extend the TUI from selectable scenario rows and in-tab scenario metadata editing to dedicated full-screen Textual editor panes for story phases/rubrics/completion criteria, transcript/evidence browsing, and guarded run-launch workflows."
+  "next_checkpoint": "Extend the TUI from selectable scenario rows, in-tab scenario metadata editing, and validated phase commands to dedicated full-screen Textual editor panes for story phases/rubrics/completion criteria, transcript/evidence browsing, and guarded run-launch workflows."
 }

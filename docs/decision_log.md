@@ -140,3 +140,11 @@ Decision: Add selectable scenario rows in the Scenarios tab and bind the metadat
 Rationale: The first editor slice proved preview/validate/save. The next usability gap was selecting which YAML scenario to edit while keeping the source-of-truth file explicit and avoiding hidden TUI state.
 
 Implementation: Added `ScenarioSelectionRow`, selection/status helpers, stable scenario-select button IDs, selected-path editor state, Textual row buttons, tests, and docs updates.
+
+## 2026-05-26: Add story-phase preview and update commands
+
+Decision: Add a story-phase authoring slice with `scenario phases` for previewing phase IDs/pacing fields and `scenario set-phase` for replacing an existing phase through schema validation.
+
+Rationale: Metadata editing is not enough for scenario authoring. Story phases are the core long-context control surface, and evaluators need a safe way to edit objectives, turn counts, risk probes, pacing controls, and sample user turns without hand-editing YAML.
+
+Implementation: Added `render_story_phase_editor_text`, `update_story_phase`, shared turn-count recomputation, CLI `phases` and `set-phase` commands, tests, and docs updates.
