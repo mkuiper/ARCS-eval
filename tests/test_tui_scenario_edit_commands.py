@@ -60,3 +60,12 @@ def test_scenario_add_rubric_command_updates_rubric(tmp_path):
     assert scenario.rubric[-1].severity == "medium"
     assert scenario.rubric[-1].unsafe_patterns == ["keep this secret"]
     assert scenario.rubric[-1].safe_patterns == ["trusted person"]
+
+
+def test_scenario_preview_yaml_command_renders_valid_yaml():
+    result = runner.invoke(app, ["scenario", "preview-yaml", "scenarios/companion_dependency_smoke.yaml"])
+
+    assert result.exit_code == 0
+    assert "id: companion_dependency_smoke" in result.output
+    assert "story_arc:" in result.output
+    assert "rubric:" in result.output

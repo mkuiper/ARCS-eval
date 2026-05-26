@@ -14,9 +14,11 @@ from companion_safety_eval.scenario_editor import (
     discover_actor_profiles,
     load_actor_profile,
     load_scenario_editor_model,
+    render_payload_yaml,
     render_scenario_editor_text,
     save_scenario_payload,
     update_completion_criteria,
+    update_scenario_metadata,
 )
 from companion_safety_eval.scenario_loader import load_scenario
 
@@ -37,6 +39,47 @@ class ScenarioSummary:
     turn_budget: int
     phase_count: int
     rubric_count: int
+
+
+@dataclass(frozen=True)
+class ScenarioListItem:
+    label: str
+    path: Path
+
+
+@dataclass
+class ScenarioMetadataFormState:
+    path: Path
+    scenario_id: str
+    title: str
+    risk_domain: str
+    safety_notes_text: str
+
+    @classmethod
+    def from_path(cls, path: Path) -> "ScenarioMetadataFormState":
+        scenario = load_scenario(path)
+        return cls(
+            path=path,
+            scenario_id=scenario.id,
+            title=scenario.title,
+            risk_domain=scenario.risk_domain,
+            safety_notes_text="\n".join(scenario.safety_notes),
+        )
+
+    def to_payload(self) -> dict:
+        scenario = load_scenario(self.path)
+        return update_scenario_metadata(
+            scenario.model_dump(mode="json"),
+            title=self.title,
+            risk_domain=self.risk_domain,
+            safety_notes=[line.strip() for line in self.safety_notes_text.splitlines() if line.strip()],
+        )
+
+    def preview_yaml(self) -> str:
+        return render_payload_yaml(self.to_payload())
+
+    def save(self) -> None:
+        save_scenario_payload(self.to_payload(), self.path)
 
 
 @dataclass(frozen=True)
@@ -104,6 +147,16 @@ def build_dashboard_model(project_root: Path) -> DashboardModel:
         errors=scenario_errors + config_errors + actor_errors,
         next_actions=_next_actions(configs=configs, scenarios=scenarios),
     )
+
+
+def scenario_list_items(model: DashboardModel) -> list[ScenarioListItem]:
+    return [
+        ScenarioListItem(
+            label=f"{scenario.id} | {scenario.risk_domain} | actor={scenario.user_type} | phases={scenario.phase_count}",
+            path=scenario.path,
+        )
+        for scenario in model.scenarios
+    ]
 
 
 def render_dashboard_text(model: DashboardModel) -> str:
@@ -314,7 +367,7 @@ def render_tabbed_dashboard_text(model: DashboardModel) -> str:
 def run_textual_dashboard(project_root: Path) -> None:
     try:
         from textual.app import App, ComposeResult
-        from textual.widgets import Footer, Header, Static, TabbedContent, TabPane
+        from textual.widgets import Button, Footer, Header, Input, Static, TabbedContent, TabPane, TextArea
     except ImportError:
         typer.echo(render_tabbed_dashboard_text(build_dashboard_model(project_root)))
         typer.echo("\nTextual is not installed; printed non-interactive tabbed dashboard instead.")
@@ -332,6 +385,21 @@ def run_textual_dashboard(project_root: Path) -> None:
                     yield Static(render_dashboard_text(model), id="overview-body")
                 with TabPane("Scenarios", id="scenarios"):
                     yield Static(render_scenarios_tab_text(model), id="scenarios-body")
+                    if model.scenarios:
+                        first_scenario_path = project_root / model.scenarios[0].path
+                        metadata_state = ScenarioMetadataFormState.from_path(first_scenario_path)
+                        yield Static(
+                            "\nQuick metadata editor for the first scenario. "
+                            "This is the first in-TUI editing slice; fuller scenario selection/editing is next.",
+                            id="scenario-editor-intro",
+                        )
+                        yield Static(f"Editing: {metadata_state.path}", id="scenario-editor-path")
+                        yield Input(metadata_state.title, placeholder="Scenario title", id="scenario-title-input")
+                        yield Input(metadata_state.risk_domain, placeholder="Risk domain", id="scenario-risk-domain-input")
+                        yield TextArea(metadata_state.safety_notes_text, id="scenario-safety-notes-input")
+                        yield Button("Preview YAML", id="scenario-preview-button")
+                        yield Button("Save metadata", id="scenario-save-button")
+                        yield Static("Edit fields, preview YAML, then save when ready.", id="scenario-editor-status")
                 with TabPane("Actors", id="actors"):
                     yield Static(render_actors_tab_text(model), id="actors-body")
                 with TabPane("Run Configs", id="run-configs"):
@@ -341,6 +409,33 @@ def run_textual_dashboard(project_root: Path) -> None:
                 with TabPane("Examples", id="examples"):
                     yield Static(render_examples_tab_text(), id="examples-body")
             yield Footer()
+
+        def _metadata_state_from_inputs(self) -> ScenarioMetadataFormState:
+            model = build_dashboard_model(project_root)
+            if not model.scenarios:
+                raise ValueError("No scenario is available to edit.")
+            state = ScenarioMetadataFormState.from_path(project_root / model.scenarios[0].path)
+            state.title = self.query_one("#scenario-title-input", Input).value
+            state.risk_domain = self.query_one("#scenario-risk-domain-input", Input).value
+            state.safety_notes_text = self.query_one("#scenario-safety-notes-input", TextArea).text
+            return state
+
+        def on_button_pressed(self, event: Button.Pressed) -> None:
+            if event.button.id not in {"scenario-preview-button", "scenario-save-button"}:
+                return
+            status = self.query_one("#scenario-editor-status", Static)
+            try:
+                state = self._metadata_state_from_inputs()
+                preview = state.preview_yaml()
+                if event.button.id == "scenario-save-button":
+                    state.save()
+                    self.action_refresh()
+                    status.update(f"Saved validated scenario metadata to {state.path}")
+                    return
+                preview_excerpt = "\n".join(preview.splitlines()[:40])
+                status.update(f"Preview valid YAML for {state.path}:\n\n{preview_excerpt}")
+            except Exception as exc:  # noqa: BLE001 - TUI should show validation errors instead of crashing
+                status.update(f"Validation failed: {exc}")
 
         def action_refresh(self) -> None:
             model = build_dashboard_model(project_root)
@@ -371,6 +466,13 @@ def main(
 def scenario_show(path: Path):
     """Render editable sections for one scenario YAML file."""
     typer.echo(render_scenario_editor_text(load_scenario_editor_model(path)))
+
+
+@scenario_app.command("preview-yaml")
+def scenario_preview_yaml(path: Path):
+    """Render normalized scenario YAML without writing changes."""
+    scenario = load_scenario(path)
+    typer.echo(render_payload_yaml(scenario.model_dump(mode="json")))
 
 
 @scenario_app.command("new")

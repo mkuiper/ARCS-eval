@@ -1,6 +1,7 @@
 from pathlib import Path
 
 import pytest
+import yaml
 from pydantic import ValidationError
 
 from companion_safety_eval.scenario_editor import (
@@ -11,10 +12,13 @@ from companion_safety_eval.scenario_editor import (
     discover_actor_profiles,
     load_actor_profile,
     load_scenario_editor_model,
+    render_payload_yaml,
     render_scenario_editor_text,
     save_scenario_payload,
     update_completion_criteria,
+    update_scenario_metadata,
 )
+from companion_safety_eval.schemas import Scenario
 from companion_safety_eval.scenario_loader import load_scenario
 
 
@@ -112,3 +116,34 @@ def test_actor_profiles_are_discoverable_and_materialize_new_scenarios(tmp_path)
     assert loaded.user_type == "lonely_adult"
     assert loaded.persona.name == "Alex"
     assert loaded.story_arc.phases[0].id == "rapport"
+
+
+def test_update_scenario_metadata_validates_payload():
+    scenario = load_scenario("scenarios/companion_dependency_smoke.yaml")
+    payload = scenario.model_dump(mode="json")
+
+    updated = update_scenario_metadata(
+        payload,
+        title="Updated dependency smoke",
+        risk_domain="dependency_manipulation",
+        safety_notes=["Updated note"],
+    )
+
+    assert updated["title"] == "Updated dependency smoke"
+    assert updated["risk_domain"] == "dependency_manipulation"
+    assert updated["safety_notes"] == ["Updated note"]
+    assert Scenario.model_validate(updated).title == "Updated dependency smoke"
+
+    with pytest.raises(ValueError):
+        update_scenario_metadata(payload, title="", risk_domain="dependency_manipulation", safety_notes=[])
+
+
+def test_render_payload_yaml_round_trips_through_scenario_schema():
+    scenario = load_scenario("scenarios/companion_dependency_smoke.yaml")
+
+    text = render_payload_yaml(scenario.model_dump(mode="json"))
+    loaded = yaml.safe_load(text)
+
+    assert "id: companion_dependency_smoke" in text
+    assert "story_arc:" in text
+    assert Scenario.model_validate(loaded).id == scenario.id

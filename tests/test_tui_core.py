@@ -2,7 +2,9 @@ from pathlib import Path
 
 from typer.testing import CliRunner
 
+from companion_safety_eval.scenario_loader import load_scenario
 from companion_safety_eval.tui import (
+    ScenarioMetadataFormState,
     app,
     build_dashboard_model,
     discover_run_configs,
@@ -14,6 +16,7 @@ from companion_safety_eval.tui import (
     render_run_configs_tab_text,
     render_scenarios_tab_text,
     render_tabbed_dashboard_text,
+    scenario_list_items,
     tab_labels,
 )
 
@@ -158,3 +161,40 @@ def test_examples_tab_contains_copyable_authoring_and_run_examples():
     assert "Add a rubric" in text
     assert "Run a smoke eval" in text
     assert ".venv/bin/arcs-tui scenario new" in text
+
+
+def test_scenario_list_items_are_selectable_and_human_readable():
+    model = build_dashboard_model(Path("."))
+    items = scenario_list_items(model)
+
+    assert any(item.path == Path("scenarios/companion_dependency_smoke.yaml") for item in items)
+    assert any("companion_dependency_smoke" in item.label and "phases=4" in item.label for item in items)
+
+
+def test_metadata_form_state_loads_from_scenario_and_renders_preview_yaml():
+    state = ScenarioMetadataFormState.from_path(Path("scenarios/companion_dependency_smoke.yaml"))
+
+    assert state.scenario_id == "companion_dependency_smoke"
+    assert state.title == "Companion dependency smoke test"
+    assert state.risk_domain == "dependency_manipulation"
+
+    state.title = "Updated title"
+    text = state.preview_yaml()
+
+    assert "title: Updated title" in text
+    assert "story_arc:" in text
+
+
+def test_metadata_form_state_saves_valid_yaml(tmp_path):
+    source = Path("scenarios/companion_dependency_smoke.yaml")
+    target = tmp_path / "scenario.yaml"
+    target.write_text(source.read_text(encoding="utf-8"), encoding="utf-8")
+
+    state = ScenarioMetadataFormState.from_path(target)
+    state.title = "Saved title"
+    state.safety_notes_text = "First note\nSecond note"
+    state.save()
+
+    reloaded = load_scenario(target)
+    assert reloaded.title == "Saved title"
+    assert reloaded.safety_notes == ["First note", "Second note"]

@@ -155,6 +155,29 @@ def update_completion_criteria(payload: dict[str, Any], max_turns: int, stop_if_
     return updated
 
 
+def update_scenario_metadata(
+    payload: dict[str, Any],
+    title: str,
+    risk_domain: str,
+    safety_notes: list[str],
+) -> dict[str, Any]:
+    if not title.strip():
+        raise ValueError("Scenario title cannot be blank.")
+    if not risk_domain.strip():
+        raise ValueError("Scenario risk domain cannot be blank.")
+    updated = _copy_payload(payload)
+    updated["title"] = title
+    updated["risk_domain"] = risk_domain
+    updated["safety_notes"] = safety_notes
+    _validate_payload(updated)
+    return updated
+
+
+def render_payload_yaml(payload: dict[str, Any]) -> str:
+    _validate_payload(payload)
+    return yaml.safe_dump(payload, sort_keys=False, allow_unicode=True)
+
+
 def add_rubric_dimension(
     payload: dict[str, Any],
     dimension_id: str,

@@ -45,7 +45,7 @@ Interactive Textual dashboard:
 The interactive dashboard is organized into tabs:
 
 - **Overview**: project root, scenario summaries, actor-profile summaries, run-config summaries, next actions, and validation errors.
-- **Scenarios**: scenario list plus copyable commands for inspecting, creating, and editing scenario YAML.
+- **Scenarios**: scenario list plus copyable commands for inspecting, creating, and editing scenario YAML. This tab also includes the first direct in-TUI metadata editor slice for the first scenario: title, risk domain, safety notes, YAML preview, and validated save.
 - **Actors**: reusable simulated-user profiles and reminders about separating actor traits from story arcs.
 - **Run Configs**: launch commands, target/roleplay/assessor summaries, and transcript paths.
 - **Help**: keyboard shortcuts, mental model, and CLI quick start.
@@ -56,6 +56,16 @@ Keyboard shortcuts:
 - `Tab` / `Shift+Tab`: switch tabs
 - `r`: refresh from YAML files
 - `q`: quit
+
+First in-TUI editing slice:
+
+1. Open `.venv/bin/arcs-tui`.
+2. Switch to the Scenarios tab.
+3. Edit the first scenario's title, risk domain, or safety notes in the visible fields.
+4. Press **Preview YAML** to validate and inspect normalized YAML.
+5. Press **Save metadata** to write the validated scenario YAML back to disk.
+
+This is intentionally a small editor slice. The next increment should replace the first-scenario shortcut with selectable scenario rows and dedicated editor screens for story phases, rubrics, and completion criteria.
 
 One-shot non-interactive dashboard, useful for logs/CI/agent sessions:
 
@@ -94,6 +104,12 @@ This displays:
 - Story arc / roleplay guide
 - Completion criteria
 - Scoring rubrics
+
+Show normalized scenario YAML without writing changes:
+
+```bash
+.venv/bin/arcs-tui scenario preview-yaml scenarios/companion_dependency_smoke.yaml
+```
 
 List reusable actor profiles:
 
@@ -154,11 +170,12 @@ Use `--output some/path.yaml` on edit commands to write a copy instead of overwr
 
 ## Current limitations
 
-The dashboard now has tabbed navigation, help, and examples, but most editing still happens through validated CLI commands rather than full-screen form widgets.
+The dashboard now has tabbed navigation, help, examples, and a first direct metadata editor slice for scenario title/risk/safety notes. Most deeper editing still happens through validated CLI commands rather than full-screen form widgets.
 
 Not implemented yet:
 
-- full Textual form panes/dropdowns
+- selectable scenario rows connected to dedicated editor screens
+- full Textual form panes/dropdowns for actor profiles, story phases, completion criteria, and rubrics
 - detailed validation error panels with field-level navigation
 - transcript/evidence browsing screens
 - launching runs from inside the Textual app
@@ -168,7 +185,7 @@ Not implemented yet:
 
 Recommended next TUI iterations:
 
-1. Add selectable list rows inside the Scenarios, Actors, and Run Configs tabs.
+1. Add selectable list rows inside the Scenarios, Actors, and Run Configs tabs, replacing the current first-scenario metadata shortcut.
 2. Add form widgets for actor profile, story phases, completion criteria, and rubric dimensions.
 3. Add validation panels using the existing Pydantic schemas.
 4. Add read-only transcript/evidence packet viewer.

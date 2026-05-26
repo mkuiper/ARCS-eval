@@ -124,3 +124,11 @@ Decision: Treat the current tabbed TUI as a discoverability layer, not the final
 Rationale: A TUI that only explains commands is not intuitive enough for average users. Raw JSON/YAML editing is better than commands but still requires schema knowledge. Structured domain forms for metadata, actor/persona, story phases, completion criteria, rubrics, and safety notes should be the primary interface; raw YAML preview can be secondary.
 
 Implementation plan: Added `docs/plans/2026-05-26-in-tui-scenario-editor.md`.
+
+## 2026-05-26: Add first direct in-TUI scenario metadata editor slice
+
+Decision: Add a small but real editor surface inside the Scenarios tab for editing the first scenario's title, risk domain, and safety notes, with normalized YAML preview and validated save.
+
+Rationale: This moves the TUI beyond command discovery toward actual authoring while keeping scope bounded. The first-scenario shortcut is not the final UX, but it proves the edit/validate/preview/save path before adding selectable rows and full editor screens.
+
+Implementation: Added metadata update and YAML rendering helpers, a `ScenarioMetadataFormState`, scenario list-item helpers, a `scenario preview-yaml` command, Textual input fields/buttons in the Scenarios tab, tests, and docs.
